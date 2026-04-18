@@ -1,3 +1,8 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { GeneratorFormComponent } from './features/generator/generator-form.component';
+
+export const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'generator' },
+  { path: 'generator', component: GeneratorFormComponent },
+];

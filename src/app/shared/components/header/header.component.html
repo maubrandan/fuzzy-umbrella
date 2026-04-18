@@ -1,0 +1,97 @@
+<header
+  [class]="
+    cn(
+      'sticky top-0 z-40 border-b backdrop-blur-md',
+      'border-slate-200/80 bg-white/90 text-slate-900',
+      'dark:border-slate-700/80 dark:bg-slate-900/95 dark:text-slate-100'
+    )
+  "
+  role="banner"
+>
+  <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-4 py-3 sm:gap-6 sm:px-6 lg:px-8">
+    <div class="flex min-w-0 flex-1 items-center gap-3">
+      <div
+        [class]="
+          cn(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border shadow-sm',
+            'border-indigo-200 bg-indigo-50 text-indigo-700',
+            'dark:border-indigo-800/80 dark:bg-indigo-950/60 dark:text-indigo-200'
+          )
+        "
+        aria-hidden="true"
+      >
+        <!-- Icono estilo QR (bloques rellenos, legible a tamaño pequeño) -->
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm6-2h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 4h6v2h-6v-2zm0-4h4v2h-4v-2z"
+          />
+        </svg>
+      </div>
+      <div class="min-w-0">
+        <h1 class="truncate text-base font-semibold tracking-tight sm:text-lg">QR Studio - Imprenta Industrial</h1>
+        <p class="hidden text-xs text-slate-500 dark:text-slate-400 sm:block">Generación y exportación para flujo industrial</p>
+      </div>
+    </div>
+
+    <div class="flex w-full flex-wrap items-center justify-end gap-3 sm:w-auto sm:flex-nowrap sm:gap-4">
+      <div
+        [class]="
+          cn(
+            'flex flex-wrap items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs',
+            'border-slate-200 bg-slate-50 text-slate-600',
+            'dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'
+          )
+        "
+        aria-label="Estado de la aplicación"
+      >
+        <span class="font-mono font-medium text-slate-800 dark:text-slate-200">{{ version }}</span>
+        <span class="hidden h-3 w-px bg-slate-200 dark:bg-slate-600 sm:inline" aria-hidden="true"></span>
+        <span class="inline-flex items-center gap-1.5 font-medium text-emerald-700 dark:text-emerald-400">
+          <span class="relative flex h-2 w-2" aria-hidden="true">
+            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-40 dark:bg-emerald-500"></span>
+            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400"></span>
+          </span>
+          Listo para exportar
+        </span>
+      </div>
+
+      <button
+        type="button"
+        role="switch"
+        [attr.aria-checked]="theme.isDark()"
+        [attr.aria-label]="theme.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        (click)="theme.toggle()"
+        [class]="
+          cn(
+            'relative inline-flex h-9 w-[3.25rem] shrink-0 items-center rounded-full border transition-colors',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900',
+            theme.isDark()
+              ? 'border-slate-600 bg-slate-800'
+              : 'border-slate-200 bg-slate-100'
+          )
+        "
+      >
+        <span
+          [class]="
+            cn(
+              'pointer-events-none absolute left-0.5 flex h-8 w-8 translate-x-0 items-center justify-center rounded-full shadow-sm transition-transform duration-200',
+              theme.isDark() ? 'translate-x-[1.35rem] bg-slate-700 text-amber-300' : 'bg-white text-amber-500'
+            )
+          "
+        >
+          @if (theme.isDark()) {
+            <!-- Lucide-style Sun -->
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+            </svg>
+          } @else {
+            <!-- Lucide-style Moon -->
+            <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+            </svg>
+          }
+        </span>
+      </button>
+    </div>
+  </div>
+</header>

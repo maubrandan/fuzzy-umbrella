@@ -1,0 +1,316 @@
+<div class="mx-auto w-full max-w-5xl">
+    <div
+      [class]="
+        cn(
+          'overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-lg shadow-slate-200/50',
+          'dark:border-slate-700 dark:bg-slate-800 dark:shadow-black/40'
+        )
+      "
+    >
+      <div
+        [class]="
+          cn(
+            'border-b border-slate-100 bg-gradient-to-r from-indigo-50/90 to-white px-6 py-5',
+            'dark:border-slate-700 dark:from-indigo-950/30 dark:to-slate-800'
+          )
+        "
+      >
+        <h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          Generador de impresión
+        </h1>
+        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          Configure el lote (máx. {{ maxRegistrosGeneracion | number : '1.0-0' }} códigos). La vista previa
+          muestra hasta {{ previsualizacionMax }} filas mientras edita.
+        </p>
+      </div>
+
+      <div class="p-6 sm:p-8">
+        <form [formGroup]="form" (ngSubmit)="onGenerar()" class="space-y-6">
+          <div
+            class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          >
+            <div class="space-y-2 xl:col-span-1">
+              <label for="puntoVenta" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Punto de Venta
+              </label>
+              <input
+                id="puntoVenta"
+                type="text"
+                formControlName="puntoVenta"
+                autocomplete="organization"
+                [class]="inputClaseBase(showFieldError('puntoVenta'))"
+                [attr.aria-invalid]="showFieldError('puntoVenta')"
+                [attr.aria-describedby]="showFieldError('puntoVenta') ? 'puntoVenta-error' : null"
+              />
+              @if (showFieldError('puntoVenta')) {
+                <p id="puntoVenta-error" class="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {{ mensajeCampo('puntoVenta') }}
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 xl:col-span-1">
+              <label for="prefijo" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Prefijo
+              </label>
+              <input
+                id="prefijo"
+                type="text"
+                formControlName="prefijo"
+                maxlength="64"
+                autocomplete="off"
+                spellcheck="false"
+                [class]="inputClaseBase(showFieldError('prefijo'))"
+                [attr.aria-invalid]="showFieldError('prefijo')"
+                [attr.aria-describedby]="showFieldError('prefijo') ? 'prefijo-error' : null"
+              />
+              @if (showFieldError('prefijo')) {
+                <p id="prefijo-error" class="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {{ mensajeCampo('prefijo') }}
+                </p>
+              }
+              <div class="mt-1.5 flex flex-wrap items-center gap-2" aria-live="polite">
+                <div [class]="qrIndicadorBarraClase()" title="Densidad estimada del payload QR"></div>
+                <span [class]="qrIndicadorTextoClase()">{{ qrIndicadorEtiqueta() }}</span>
+                <span class="text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                  {{ printGenerator.qrStatus().longitud }} caracteres
+                </span>
+              </div>
+              @if (printGenerator.qrStatus().nivel === 'peligro') {
+                <p
+                  class="mt-1 text-xs font-medium text-red-600 dark:text-red-400"
+                  role="status"
+                >
+                  El código es muy largo; podría haber problemas de lectura en troqueles pequeños
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 xl:col-span-1">
+              <label for="rangoInicio" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Rango Inicio
+              </label>
+              <input
+                id="rangoInicio"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                formControlName="rangoInicio"
+                [class]="
+                  inputClaseBase(
+                    showFieldError('rangoInicio') || showRangoOrdenError() || showGroupError('paddingInsuficiente')
+                  )
+                "
+                [attr.aria-invalid]="
+                  showFieldError('rangoInicio') || showRangoOrdenError() || showGroupError('paddingInsuficiente')
+                "
+                [attr.aria-describedby]="
+                  showFieldError('rangoInicio') ? 'rangoInicio-error' : null
+                "
+              />
+              @if (showFieldError('rangoInicio')) {
+                <p id="rangoInicio-error" class="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {{ mensajeCampo('rangoInicio') }}
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 xl:col-span-1">
+              <label for="rangoFin" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Rango Fin
+              </label>
+              <input
+                id="rangoFin"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                formControlName="rangoFin"
+                [class]="
+                  inputClaseBase(
+                    showFieldError('rangoFin') || showRangoOrdenError() || showGroupError('paddingInsuficiente')
+                  )
+                "
+                [attr.aria-invalid]="
+                  showFieldError('rangoFin') || showRangoOrdenError() || showGroupError('paddingInsuficiente')
+                "
+                [attr.aria-describedby]="showFieldError('rangoFin') ? 'rangoFin-error' : null"
+              />
+              @if (showFieldError('rangoFin')) {
+                <p id="rangoFin-error" class="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {{ mensajeCampo('rangoFin') }}
+                </p>
+              }
+            </div>
+
+            <div class="space-y-2 xl:col-span-1">
+              <label for="padding" class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Padding
+              </label>
+              <input
+                id="padding"
+                type="number"
+                inputmode="numeric"
+                step="1"
+                formControlName="padding"
+                [class]="
+                  inputClaseBase(
+                    showFieldError('padding') || showGroupError('paddingInsuficiente')
+                  )
+                "
+                [attr.aria-invalid]="showFieldError('padding') || showGroupError('paddingInsuficiente')"
+                [attr.aria-describedby]="
+                  'padding-desc' + (showFieldError('padding') ? ' padding-error' : '')
+                "
+              />
+              @if (showFieldError('padding')) {
+                <p id="padding-error" class="text-sm text-red-600 dark:text-red-400" role="alert">
+                  {{ mensajeCampo('padding') }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <p
+            id="padding-desc"
+            class="text-xs leading-snug text-slate-500 dark:text-slate-400 sm:text-sm"
+          >
+            *Padding: Cantidad mínima de dígitos del número (relleno con ceros a la izquierda). Debe alcanzar para
+            el valor más largo del rango; p. ej. con rango hasta 999 hace falta al menos 3.
+          </p>
+
+          @if (showRangoOrdenError()) {
+            <p class="text-sm font-medium text-red-600 dark:text-red-400" role="alert">
+              El rango inicio no puede ser mayor que el rango fin.
+            </p>
+          }
+          @if (showGroupError('loteMaximo')) {
+            <p class="text-sm text-red-600 dark:text-red-400" role="alert">
+              El lote supera el máximo permitido ({{ maxRegistrosGeneracion | number : '1.0-0' }} registros).
+            </p>
+          }
+          @if (showGroupError('paddingInsuficiente')) {
+            <p class="text-sm text-red-600 dark:text-red-400" role="alert">
+              El padding es insuficiente para algún valor del rango.
+            </p>
+          }
+
+          @if (printGenerator.errorValidacion(); as err) {
+            <p
+              class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-200"
+              role="alert"
+            >
+              {{ err }}
+            </p>
+          }
+
+          @if (printGenerator.estado() === 'listo' && printGenerator.hayRegistros()) {
+            <p class="text-sm font-medium text-emerald-700 dark:text-emerald-400" aria-live="polite">
+              Generados {{ printGenerator.conteoRegistros() | number : '1.0-0' }} registros.
+            </p>
+          }
+
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-xs text-slate-500 dark:text-slate-500">
+              El botón Generar respeta las reglas de dominio del servicio (rango, padding y tamaño del lote).
+            </p>
+            <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                (click)="onDescargarParaCorelDraw()"
+                [disabled]="!printGenerator.hayRegistros()"
+                [class]="
+                  cn(
+                    'inline-flex items-center justify-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-semibold transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900',
+                    printGenerator.hayRegistros()
+                      ? 'border-indigo-200 bg-white text-indigo-700 shadow-sm hover:bg-indigo-50 dark:border-indigo-800 dark:bg-slate-900 dark:text-indigo-300 dark:hover:bg-indigo-950/40'
+                      : 'cursor-not-allowed border-slate-200 bg-slate-50 text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500'
+                  )
+                "
+              >
+                <svg
+                  class="h-4 w-4 shrink-0"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </svg>
+                Descargar para CorelDraw
+              </button>
+              <button
+                type="submit"
+                [disabled]="!formularioValido()"
+                [class]="
+                  cn(
+                    'inline-flex shrink-0 items-center justify-center rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900',
+                    formularioValido()
+                      ? 'bg-indigo-600 text-white shadow-sm hover:bg-indigo-700'
+                      : 'cursor-not-allowed bg-slate-200 text-slate-500 shadow-none dark:bg-slate-700 dark:text-slate-400'
+                  )
+                "
+              >
+                Generar
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div
+          [class]="
+            cn(
+              'mt-8 rounded-xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/50'
+            )
+          "
+        >
+          <h2 class="text-sm font-semibold text-slate-800 dark:text-slate-200">
+            Vista previa ({{ previsualizacionMax }} primeras filas)
+          </h2>
+          @if (printGenerator.previsualizacion().length === 0) {
+            <p class="mt-3 text-sm text-slate-500 dark:text-slate-400">
+              Ajuste los campos para ver una muestra válida según las reglas de dominio.
+            </p>
+          } @else {
+            <div class="mt-3 overflow-x-auto rounded-lg border border-slate-200 bg-white dark:border-slate-600 dark:bg-slate-900">
+              <table class="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-700">
+                <thead class="bg-slate-100 dark:bg-slate-800">
+                  <tr>
+                    <th scope="col" class="px-4 py-2 font-medium text-slate-700 dark:text-slate-300">#</th>
+                    <th scope="col" class="px-4 py-2 font-medium text-slate-700 dark:text-slate-300">Código local</th>
+                    <th scope="col" class="px-4 py-2 font-medium text-slate-700 dark:text-slate-300">Payload QR</th>
+                    <th scope="col" class="px-4 py-2 font-medium text-slate-700 dark:text-slate-300">PV</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                  @for (reg of printGenerator.previsualizacion(); track reg.id; let i = $index) {
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60">
+                      <td class="whitespace-nowrap px-4 py-2 text-slate-600 dark:text-slate-400">{{ i + 1 }}</td>
+                      <td class="px-4 py-2 font-mono text-xs text-slate-900 dark:text-slate-100">
+                        {{ reg.codigoLocal }}
+                      </td>
+                      <td class="max-w-xs truncate px-4 py-2 font-mono text-xs text-slate-700 dark:text-slate-300">
+                        {{ reg.payloadQr }}
+                      </td>
+                      <td class="px-4 py-2 text-slate-600 dark:text-slate-400">
+                        {{ reg.prefijoPuntoVenta ?? '—' }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+        <app-history-list (repetirTrabajo)="onRepetirDesdeHistorial($event)" />
+      </div>
+    </div>
+</div>

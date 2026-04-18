@@ -1,0 +1,100 @@
+<div
+  [class]="
+    cn(
+      'mt-8 rounded-xl border border-slate-200 bg-white/90 p-4 shadow-sm',
+      'dark:border-slate-700 dark:bg-slate-800/90'
+    )
+  "
+>
+  <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+    <h2 class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">
+      Historial de trabajos
+    </h2>
+    @if (filas().length > 0) {
+      <button
+        type="button"
+        (click)="onEliminarHistorial()"
+        [class]="
+          cn(
+            'rounded-md border border-red-200 bg-white px-2.5 py-1 text-xs font-medium text-red-700',
+            'transition-colors hover:bg-red-50',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900',
+            'dark:border-red-900/60 dark:bg-slate-900 dark:text-red-300 dark:hover:bg-red-950/40'
+          )
+        "
+      >
+        Eliminar
+      </button>
+    }
+  </div>
+
+  @if (filas().length === 0) {
+    <p class="text-xs text-slate-500 dark:text-slate-400">
+      Tras descargar un CSV, el trabajo quedará listado aquí (persistente en este navegador).
+    </p>
+  } @else {
+    <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+      <table class="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+        <thead class="bg-slate-50 dark:bg-slate-800/80">
+          <tr>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 font-medium text-slate-600 dark:text-slate-300">
+              Fecha
+            </th>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 font-medium text-slate-600 dark:text-slate-300">
+              PV
+            </th>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 font-medium text-slate-600 dark:text-slate-300">
+              Rango
+            </th>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 font-medium text-slate-600 dark:text-slate-300">
+              Prefijo
+            </th>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 text-right font-medium text-slate-600 dark:text-slate-300">
+              Regs.
+            </th>
+            <th scope="col" class="whitespace-nowrap px-2 py-1.5 text-right font-medium text-slate-600 dark:text-slate-300">
+              Acción
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+          @for (t of filas(); track t.id) {
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50">
+              <td class="whitespace-nowrap px-2 py-1.5 text-slate-700 dark:text-slate-300">
+                {{ t.fecha | date : 'short' }}
+              </td>
+              <td class="max-w-[7rem] truncate px-2 py-1.5 text-slate-600 dark:text-slate-400" [title]="t.puntoVenta || '—'">
+                {{ t.puntoVenta || '—' }}
+              </td>
+              <td class="whitespace-nowrap px-2 py-1.5 font-mono text-[11px] text-slate-800 dark:text-slate-200">
+                {{ t.rangoInicio }}–{{ t.rangoFin }}
+              </td>
+              <td class="max-w-[6rem] truncate px-2 py-1.5 font-mono text-[11px] text-slate-800 dark:text-slate-200" [title]="t.prefijo">
+                {{ t.prefijo }}
+              </td>
+              <td class="whitespace-nowrap px-2 py-1.5 text-right tabular-nums text-slate-700 dark:text-slate-300">
+                {{ t.cantidadRegistros | number : '1.0-0' }}
+              </td>
+              <td class="whitespace-nowrap px-2 py-1.5 text-right">
+                <button
+                  type="button"
+                  (click)="onRepetir(t)"
+                  [class]="
+                    cn(
+                      'rounded border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-800',
+                      'hover:bg-indigo-100',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-900',
+                      'dark:border-indigo-800 dark:bg-indigo-950/50 dark:text-indigo-200 dark:hover:bg-indigo-900/50'
+                    )
+                  "
+                >
+                  Repetir
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

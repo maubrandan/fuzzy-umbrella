@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+/* Tailwind v4: `dark:` usa `prefers-color-scheme` por defecto. Forzar selector `.dark` en `<html>` para el toggle manual (ThemeService). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* No usar source() en la misma línea del @import: el pipeline de Angular puede romperlo (@media source). */
+@source './app/**/*.html';
+@source './app/**/*.ts';
